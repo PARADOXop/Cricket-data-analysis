@@ -3,8 +3,60 @@ create database pizzasales;
 use pizzasales;
 
 select * 
-from 
-	pizza_sales;
+from pizza_sales;
+
+-- adding 2 extra columns for better visualisation 1. adding order day 2. calculating total_orders
+
+ALTER TABLE pizza_sales
+add total_orders decimal(10, 5);
+
+
+-- adding day column
+
+ALTER TABLE pizza_sales
+add days varchar(15);
+
+update pizza_sales
+set pizza_sales.days = DATENAME(weekday, order_date);
+-- **************************************************************************************************************
+
+ALTER TABLE pizza_sales
+add hours int;
+
+
+update pizza_sales
+set pizza_sales.hours = datepart(hour, order_time)
+
+--*****************************************************************************************************************
+alter table pizza_sales
+update pizza_sales
+set total_orders = decimal;
+
+
+UPDATE pizza_sales
+SET total_orders = (
+    SELECT 1.0 / COUNT(*)
+    FROM pizza_sales AS ps2
+    WHERE ps2.order_id = pizza_sales.order_id
+)
+
+
+select order_day, count( distinct order_id) as orders_perDay
+from pizza_sales
+group by order_day
+order by orders_perDay desc
+
+
+select order_id, 1.0 / count(1) as total_order 
+from pizza_sales 
+group by order_id
+order by order_id;
+
+
+-- **************************************************************************************************************************************
+--- data analysis
+**************************************************************************************************************************************
+
 
 -- 1. total Revenue: the sum of the total price of all pizza order
 
